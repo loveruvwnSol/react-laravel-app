@@ -1,3 +1,3 @@
-FROM node:latest
+FROM node:20
 
 WORKDIR /app
