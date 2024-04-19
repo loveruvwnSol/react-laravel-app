@@ -8,8 +8,10 @@ import {
   Input,
   Button,
   Box,
-  Link,
 } from "@chakra-ui/react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { RegisterBtn } from "../atoms/RegisterBtn";
 
 export const Login = () => {
   const [data, setData] = useState({});
@@ -20,14 +22,35 @@ export const Login = () => {
     console.log(data);
   }, [data]);
 
-  const Test = () => {
-    setData({
-      email: email,
-      password: password,
-    });
-    console.log(data);
-    // setEmail("");
-    // setPassword("");
+  const Login = async () => {
+    if (!email.match(/\S/g)) {
+      alert("please enter your email");
+    } else if (!password.match(/\S/g)) {
+      alert("please enter your password");
+    } else {
+      await setData({
+        email: email,
+        password: password,
+      });
+      console.log(data);
+
+      await axios
+        .post("http://localhost:8000/api/users/login", data)
+        .then((res) => {
+          window.location.href = "/home";
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      try {
+        const res = await axios.get("http://localhost:8000/api/users/self");
+        console.log(res);
+        return;
+      } catch (e) {
+        return e;
+      }
+    }
   };
 
   return (
@@ -56,16 +79,16 @@ export const Login = () => {
             name="password"
             type="password"
             variant="flushed"
-            placeholder="Enter your password"
+            placeholder="password"
             mb={10}
           />
           <Box display="flex" alignItems="center" justifyContent="space-around">
-            <Link color="blue" textDecoration="underline">
-              Create Account
+            <Link to="/createAccount">
+              <Text color="blue" textDecoration="underline">
+                Create Account
+              </Text>
             </Link>
-            <Button onClick={Test} type="submit" colorScheme="messenger">
-              Login
-            </Button>
+            <RegisterBtn onClick={Login} text={"Login"}/>
           </Box>
         </FormControl>
       </CardBody>
