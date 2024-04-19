@@ -8,9 +8,10 @@ import {
   Input,
   Button,
   Box,
-  Link,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { RegisterBtn } from "../atoms/RegisterBtn";
 
 export const CreateAccount = () => {
   const [data, setData] = useState({});
@@ -23,21 +24,28 @@ export const CreateAccount = () => {
   }, [data]);
 
   const createAccount = async () => {
-    await setData({
-      name: name,
-      email: email,
-      password: password,
-    });
-
-    await axios
-      .post("http://localhost:8000/api/users/create", data)
-      .then((res) => {
-        // setData("");
-        // location.href = "この中に遷移したい先のページのパスを書く";
-      })
-      .catch((error) => {
-        console.log(error);
+    if (!name.match(/\S/g)) {
+      alert("please enter your name");
+    } else if (!email.match(/\S/g)) {
+      alert("please enter your email");
+    } else if (!password.match(/\S/g)) {
+      alert("please enter your password");
+    } else {
+      await setData({
+        name: name,
+        email: email,
+        password: password,
       });
+
+      await axios
+        .post("http://localhost:8000/api/users/create", data)
+        .then((res) => {
+          // window.location.href = "/login";
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -47,7 +55,7 @@ export const CreateAccount = () => {
           <Text mb={8} fontSize={36} fontWeight="bold">
             Create your account
           </Text>
-          <FormLabel mb={0}>Email address</FormLabel>
+          <FormLabel mb={0}>Name</FormLabel>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -55,9 +63,10 @@ export const CreateAccount = () => {
             name="name"
             type="text"
             variant="flushed"
-            placeholder="Enter your name"
+            placeholder="name"
             mb={4}
           />
+          <FormLabel mb={0}>Email address</FormLabel>
           <Input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -76,20 +85,16 @@ export const CreateAccount = () => {
             name="password"
             type="password"
             variant="flushed"
-            placeholder="Enter your password"
+            placeholder="password"
             mb={10}
           />
           <Box display="flex" alignItems="center" justifyContent="space-around">
-            <Link color="blue" textDecoration="underline">
-              Login
+          <Link to="/login">
+              <Text color="blue" textDecoration="underline">
+                Login
+              </Text>
             </Link>
-            <Button
-              onClick={createAccount}
-              type="submit"
-              colorScheme="messenger"
-            >
-              create account
-            </Button>
+            <RegisterBtn onClick={createAccount} text={"Create Account"}/>
           </Box>
         </FormControl>
       </CardBody>
