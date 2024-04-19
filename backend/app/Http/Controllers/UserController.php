@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\LoginRequest;
 use App\Repositories\User\Interface\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -35,5 +36,17 @@ class UserController extends Controller
 
             return response()->json(['message' => 'create user successful']);
         });
+    }
+
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $user = $this->userRepo->findOneByAuth(
+            $request->validated('email'),
+            $request->validated('password'),
+        );
+
+        $this->userRepo->login($user);
+
+        return response()->json(['message' => 'login successful']);
     }
 }
